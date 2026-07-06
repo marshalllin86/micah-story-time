@@ -186,6 +186,28 @@
     height: 16px;
   }
 
+  .meta-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .link-btn{
+    display:inline-flex;
+    align-items:center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .link-btn:hover{
+    text-decoration: underline;
+  }
+
   .progress-track{
     height: 4px;
     background: #E7ECEA;
@@ -341,7 +363,7 @@
   // 在这里加音乐，格式和上面一样
   // ============================================================
   const MUSIC = [
-    { title: "小星星", file: "audio/music-01.mp3" },                                  
+    { title: "小星星", file: "audio/music-01.mp3", link: "https://www.youtube.com/watch?v=EvjZ7ckgYTg" },
     { title: "生日歌", file: "audio/music-02.mp3" },
   ];
 
@@ -374,7 +396,10 @@
       <span class="play-icon">${PLAY_SVG}</span>
       <span class="info">
         <div class="title">${story.title}</div>
-        <div class="status">点一下播放</div>
+        <div class="meta-row">
+          <div class="status">点一下播放</div>
+          ${story.link ? `<a class="link-btn" href="${story.link}" target="_blank" rel="noopener noreferrer">YouTube ↗</a>` : ''}
+        </div>
         <div class="progress-track"><div class="progress-fill"></div></div>
       </span>
     `;
