@@ -1,0 +1,3 @@
+把 mp3 音频文件放在这个文件夹里，
+文件名要和 index.html 里 STORIES 数组中的 file 字段一致，
+比如 story-01.mp3、story-02.mp3 ...
