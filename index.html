@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>故事和音乐</title>
+<title>Micah's Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -72,6 +72,8 @@
 
   .tabs{
     display:flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 8px;
     background: var(--paper);
     padding: 6px;
@@ -271,6 +273,132 @@
     font-size: 14px;
   }
 
+  .music-subtabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .subtab{
+    border: none;
+    background: var(--paper);
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
+  }
+
+  .subtab.active{
+    background: var(--indigo);
+    color: #fff;
+  }
+
+  .learning-card{
+    background: var(--paper);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
+  }
+
+  .learning-form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .learning-label{
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .learning-title-input,
+  .learning-notes-input{
+    width: 100%;
+    border: 1px solid #dfe7e4;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font: inherit;
+    color: var(--ink);
+    background: #fafdfc;
+  }
+
+  .learning-notes-input{
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .learning-submit{
+    align-self: flex-start;
+    border: none;
+    background: var(--indigo);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .learning-actions{
+    display:flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .learning-action-btn{
+    border: none;
+    background: transparent;
+    color: var(--indigo);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0;
+  }
+
+  .learning-action-btn.delete{
+    color: var(--rose);
+  }
+
+  .learning-list{
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .learning-item{
+    background: #f7fbfa;
+    border: 1px solid #e3ece8;
+    border-radius: 16px;
+    padding: 14px;
+  }
+
+  .learning-item h3{
+    margin: 0 0 6px;
+    font-size: 18px;
+  }
+
+  .learning-item p{
+    margin: 0;
+    color: var(--ink-soft);
+    white-space: pre-line;
+    line-height: 1.6;
+  }
+
+  .learning-meta{
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .learning-empty{
+    color: var(--ink-soft);
+    text-align: center;
+    padding: 20px 0;
+  }
+
   .about-card{
     background: var(--paper);
     border-radius: var(--radius);
@@ -365,14 +493,16 @@
 <body>
 
 <header>
-  <h1>Micah's Music and Stories</h1>
-  <p>Pick a tab to start exploring</p>
+  <h1>Micah's Hub</h1>
+  <p>Explore stories, reading, music, learning, and sports</p>
 </header>
 
 <nav class="tabs" role="tablist">
-  <button class="tab active" data-tab="stories">Story</button>
+  <button class="tab active" data-tab="stories">Stories</button>
+  <button class="tab" data-tab="reading">Reading</button>
   <button class="tab" data-tab="music">Music</button>
-  <button class="tab" data-tab="about">About Me</button>
+  <button class="tab" data-tab="learning">My Learning</button>
+  <button class="tab" data-tab="sports">Sports</button>
 </nav>
 
 <section id="panel-stories" class="panel active">
@@ -380,14 +510,40 @@
   <div class="pager" id="pager-stories"></div>
 </section>
 
+<section id="panel-reading" class="panel">
+  <div class="shelf" id="shelf-reading"></div>
+  <div class="pager" id="pager-reading"></div>
+</section>
+
 <section id="panel-music" class="panel">
+  <div class="music-subtabs" role="tablist" aria-label="Music categories">
+    <button class="subtab active" data-subtab="suzuki">Suzuki Piano</button>
+    <button class="subtab" data-subtab="ameb">AMEB</button>
+    <button class="subtab" data-subtab="collection">My Collection</button>
+  </div>
   <div class="shelf" id="shelf-music"></div>
   <div class="pager" id="pager-music"></div>
 </section>
 
-<section id="panel-about" class="panel">
+<section id="panel-learning" class="panel">
+  <div class="learning-card">
+    <form id="learning-form" class="learning-form">
+      <label class="learning-label" for="learning-title">Title</label>
+      <input id="learning-title" class="learning-title-input" type="text" placeholder="What are you learning now?" />
+
+      <label class="learning-label" for="learning-notes">Notes</label>
+      <textarea id="learning-notes" class="learning-notes-input" placeholder="Write your notes here..."></textarea>
+
+      <button class="learning-submit" type="submit">Add Learning Session</button>
+    </form>
+
+    <div class="learning-list" id="learning-list"></div>
+  </div>
+</section>
+
+<section id="panel-sports" class="panel">
   <div class="about-card">
-    <div class="avatar" id="about-avatar">☺</div>
+    <div class="avatar" id="about-avatar">⚽</div>
     <h2 id="about-name"></h2>
     <p id="about-bio"></p>
   </div>
@@ -408,42 +564,47 @@
 <audio id="player" preload="none"></audio>
 
 <script>
-  // ============================================================
-  // 在这里加故事，每行一个，不用管颜色
-  // ============================================================
   const STORIES = [
     { title: "Where do flies go in the Winter?", file: "audio/where_do_flies_go_in_the_winter.m4a" },
     { title: "What Does 'As The Crow Flies' Mean?", file: "audio/what_does_as_the_crow_flies_mean.m4a" },
-    { title: "What is Spring Water", file: "audio/what_is_spring_water.m4a" },
+    { title: "What is Spring Water?", file: "audio/what_is_spring_water.m4a" },
     { title: "Why Do We Sneeze?", file: "audio/why_do_we_sneeze.m4a" },
-    { title: "Why Do Pieces of Wood Have Knots", file: "audio/why_do_pieces_of_wood_have_knots.m4a" },
-    { title: "Why Do Snakes Coil Up to Sleep",   file: "audio/why_do_snakes_coil_up_to_sleep.m4a" },
+    { title: "Why Do Pieces of Wood Have Knots?", file: "audio/why_do_pieces_of_wood_have_knots.m4a" },
+    { title: "Why Do Snakes Coil Up to Sleep?", file: "audio/why_do_snakes_coil_up_to_sleep.m4a" },
   ];
 
-  // ============================================================
-  // 在这里加音乐，格式和上面一样
-  // ============================================================
-  const MUSIC = [
-    { title: "Level 1 Graduation Piece - Mineut in G Major", file: "audio/level1.webm", link: "https://www.youtube.com/watch?v=M6O6M05hV60" },
-    { title: "Level 2 Graduation Piece - Sonatina in G Major", file: "audio/level2.webm", link: "https://www.youtube.com/watch?v=ozd27F2Xn_o" },
-    { title: "Level 3 Graduation Piece - Sonatina in C Major", file: "audio/level3.webm",  link: "https://www.youtube.com/watch?v=OHuKSd5hWsM" },
-    { title: "Level 4 Graduation Piece -  Minuet 1, II and Gigue from Partita in Bflat BWV825", file: "audio/level4.webm", link: "https://www.youtube.com/watch?v=nWtlYeWjg1M" },
-    
-    ];
+  const READING = [
+    { title: "Reading Goal", description: "A short reading plan for the week.", file: "" },
+    { title: "Poetry Practice", description: "A calm collection of poems to enjoy.", file: "" },
+  ];
 
-  // ============================================================
-  // "关于我"这一页显示的内容，改这三行就行
-  // ============================================================
-  const ABOUT = {
-    avatar: "☺",
-    name: "这里写名字",
-    bio: "在这里写一段自我介绍，比如喜欢的东西、几岁了、平时喜欢做什么…\n可以换行写好几段。",
+  const MUSIC_CATEGORIES = {
+    suzuki: [
+      { title: "Level 1 Graduation Piece - Minuet in G Major", file: "audio/level1.webm", link: "https://www.youtube.com/watch?v=M6O6M05hV60" },
+      { title: "Level 2 Graduation Piece - Sonatina in G Major", file: "audio/level2.webm", link: "https://www.youtube.com/watch?v=ozd27F2Xn_o" },
+      { title: "Level 3 Graduation Piece - Sonatina in C Major", file: "audio/level3.webm", link: "https://www.youtube.com/watch?v=OHuKSd5hWsM" },
+      { title: "Level 4 Graduation Piece - Minuet 1, II and Gigue from Partita in Bflat BWV825", file: "audio/level4.webm", link: "https://www.youtube.com/watch?v=nWtlYeWjg1M" },
+    ],
+    ameb: [
+      { title: "Level 3 Graduation Piece - Sonatina in C Major", file: "audio/level3.webm", link: "https://www.youtube.com/watch?v=OHuKSd5hWsM" },
+      { title: "Level 4 Graduation Piece - Minuet 1, II and Gigue from Partita in Bflat BWV825", file: "audio/level4.webm", link: "https://www.youtube.com/watch?v=nWtlYeWjg1M" },
+    ],
+    collection: [
+      { title: "My Favourite Practice Pieces", description: "Add your favourite recordings here.", file: "" },
+    ],
   };
 
-  // 颜色按这个顺序循环使用，想调整颜色搭配就调整这个列表
-  const COLORS = ['sage', 'rose', 'ochre', 'indigo', 'teal', 'plum'];
+  const LEARNING_STORAGE_KEY = 'micah-learning-sessions';
+  let learningSessions = [];
+  let editingSessionId = null;
 
-  // 每页显示多少个，建议 10~15
+  const SPORTS = {
+    avatar: "⚽",
+    name: "Sports",
+    bio: "I enjoy staying active with sports, training, and healthy routines.\nThis section can be updated with your favourite activities.",
+  };
+
+  const COLORS = ['sage', 'rose', 'ochre', 'indigo', 'teal', 'plum'];
   const PAGE_SIZE = 12;
 
   const player = document.getElementById('player');
@@ -465,8 +626,8 @@
       <span class="info">
         <div class="title">${story.title}</div>
         <div class="meta-row">
-          <div class="status">点一下播放</div>
-          ${story.youtubeId ? `<button type="button" class="action-btn" data-action="video">▶ 观看视频</button>` : (story.link ? `<a class="action-btn" href="${story.link}" target="_blank" rel="noopener noreferrer">YouTube ↗</a>` : '')}
+          <div class="status">${story.description || (story.file ? 'Tap to play' : 'More coming soon')}</div>
+          ${story.youtubeId ? `<button type="button" class="action-btn" data-action="video">▶ Watch video</button>` : (story.link ? `<a class="action-btn" href="${story.link}" target="_blank" rel="noopener noreferrer">YouTube ↗</a>` : '')}
         </div>
         <div class="progress-track"><div class="progress-fill"></div></div>
       </span>
@@ -486,7 +647,7 @@
     if(!book) return;
     book.classList.remove('playing');
     book.querySelector('.play-icon').innerHTML = PLAY_SVG;
-    book.querySelector('.status').textContent = '点一下播放';
+    book.querySelector('.status').textContent = 'Tap to play';
     book.querySelector('.progress-fill').style.width = '0%';
   }
 
@@ -504,6 +665,12 @@
 
   function toggle(book, story){
     const isSameBook = currentBook === book;
+
+    if(!story.file){
+      resetBook(currentBook);
+      currentBook = null;
+      return;
+    }
 
     if(isSameBook && !player.paused){
       player.pause();
@@ -525,14 +692,14 @@
     if(!currentBook) return;
     currentBook.classList.add('playing');
     currentBook.querySelector('.play-icon').innerHTML = PAUSE_SVG;
-    currentBook.querySelector('.status').textContent = '正在播放…';
+    currentBook.querySelector('.status').textContent = 'Now playing…';
   });
 
   player.addEventListener('pause', () => {
     if(!currentBook) return;
     currentBook.classList.remove('playing');
     currentBook.querySelector('.play-icon').innerHTML = PLAY_SVG;
-    currentBook.querySelector('.status').textContent = '暂停了，点一下继续';
+    currentBook.querySelector('.status').textContent = 'Paused. Tap to continue';
   });
 
   player.addEventListener('ended', () => {
@@ -569,9 +736,9 @@
     if(totalPages <= 1){ pager.innerHTML = ''; return; }
 
     pager.innerHTML = `
-      <button class="pager-btn" data-dir="prev" ${state.page === 0 ? 'disabled' : ''}>‹ 上一页</button>
-      <span class="pager-info">第 ${state.page + 1} / ${totalPages} 页</span>
-      <button class="pager-btn" data-dir="next" ${state.page === totalPages - 1 ? 'disabled' : ''}>下一页 ›</button>
+      <button class="pager-btn" data-dir="prev" ${state.page === 0 ? 'disabled' : ''}>‹ Previous</button>
+      <span class="pager-info">Page ${state.page + 1} of ${totalPages}</span>
+      <button class="pager-btn" data-dir="next" ${state.page === totalPages - 1 ? 'disabled' : ''}>Next ›</button>
     `;
 
     pager.querySelector('[data-dir="prev"]').addEventListener('click', () => {
@@ -581,6 +748,86 @@
     pager.querySelector('[data-dir="next"]').addEventListener('click', () => {
       state.page++;
       onChange();
+    });
+  }
+
+  function escapeHtml(value){
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function loadLearningSessions(){
+    try {
+      const stored = localStorage.getItem(LEARNING_STORAGE_KEY);
+      if(!stored) return [];
+      const parsed = JSON.parse(stored);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function saveLearningSessions(){
+    localStorage.setItem(LEARNING_STORAGE_KEY, JSON.stringify(learningSessions));
+  }
+
+  function renderLearningSessions(){
+    const container = document.getElementById('learning-list');
+    if(!container) return;
+
+    if(learningSessions.length === 0){
+      container.innerHTML = '<div class="learning-empty">No learning sessions yet. Add one above.</div>';
+      return;
+    }
+
+    container.innerHTML = learningSessions.map((session) => `
+      <div class="learning-item">
+        <h3>${escapeHtml(session.title || 'Learning session')}</h3>
+        <p>${escapeHtml(session.notes || '')}</p>
+        <div class="learning-meta">${escapeHtml(session.createdAt || '')}</div>
+        <div class="learning-actions">
+          <button class="learning-action-btn edit" type="button" data-edit-id="${session.id}">Edit</button>
+          <button class="learning-action-btn delete" type="button" data-delete-id="${session.id}">Delete</button>
+        </div>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('[data-edit-id]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = Number(btn.getAttribute('data-edit-id'));
+        const session = learningSessions.find((item) => item.id === id);
+        if(!session) return;
+
+        const titleInput = document.getElementById('learning-title');
+        const notesInput = document.getElementById('learning-notes');
+        const submitBtn = document.querySelector('#learning-form .learning-submit');
+        if(titleInput) titleInput.value = session.title || '';
+        if(notesInput) notesInput.value = session.notes || '';
+        editingSessionId = id;
+        if(submitBtn) submitBtn.textContent = 'Update Learning Session';
+        if(titleInput) titleInput.focus();
+      });
+    });
+
+    container.querySelectorAll('[data-delete-id]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = Number(btn.getAttribute('data-delete-id'));
+        learningSessions = learningSessions.filter((item) => item.id !== id);
+        saveLearningSessions();
+        renderLearningSessions();
+      });
+    });
+  }
+
+  function renderMusicCategory(categoryKey){
+    const state = musicState[categoryKey];
+    renderShelf('shelf-music', 'pager-music', MUSIC_CATEGORIES[categoryKey] || [], state);
+    document.querySelectorAll('.subtab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.subtab === categoryKey);
     });
   }
 
@@ -604,20 +851,70 @@
       document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
 
       const hint = document.getElementById('footer-hint');
-      hint.textContent = btn.dataset.tab === 'about'
-        ? '想改这里的介绍，去 index.html 里改 ABOUT 那几行就行'
-        : '轻轻点一下封面上的圆点，就可以播放或暂停啦';
+      hint.textContent = btn.dataset.tab === 'sports'
+        ? 'Update this section in index.html if you want to change the sports text.'
+        : btn.dataset.tab === 'learning'
+          ? 'Add a title and notes for each new learning session.'
+          : 'Tap the circle on the cover to play or pause';
     });
   });
 
-  const storiesState = { page: 0 };
-  const musicState = { page: 0 };
-  renderShelf('shelf-stories', 'pager-stories', STORIES, storiesState);
-  renderShelf('shelf-music', 'pager-music', MUSIC, musicState);
+  document.querySelectorAll('.subtab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      renderMusicCategory(btn.dataset.subtab);
+    });
+  });
 
-  document.getElementById('about-avatar').textContent = ABOUT.avatar;
-  document.getElementById('about-name').textContent = ABOUT.name;
-  document.getElementById('about-bio').textContent = ABOUT.bio;
+  const learningForm = document.getElementById('learning-form');
+  if(learningForm){
+    learningForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const titleInput = document.getElementById('learning-title');
+      const notesInput = document.getElementById('learning-notes');
+      const title = titleInput ? titleInput.value.trim() : '';
+      const notes = notesInput ? notesInput.value.trim() : '';
+
+      if(!title && !notes) return;
+
+      if(editingSessionId){
+        learningSessions = learningSessions.map((session) =>
+          session.id === editingSessionId
+            ? { ...session, title: title || 'Learning session', notes, createdAt: new Date().toLocaleString() }
+            : session
+        );
+      } else {
+        learningSessions.unshift({
+          id: Date.now(),
+          title: title || 'Learning session',
+          notes,
+          createdAt: new Date().toLocaleString()
+        });
+      }
+
+      saveLearningSessions();
+      renderLearningSessions();
+
+      editingSessionId = null;
+      if(titleInput) titleInput.value = '';
+      if(notesInput) notesInput.value = '';
+      const submitBtn = document.querySelector('#learning-form .learning-submit');
+      if(submitBtn) submitBtn.textContent = 'Add Learning Session';
+      if(titleInput) titleInput.focus();
+    });
+  }
+
+  const storiesState = { page: 0 };
+  const readingState = { page: 0 };
+  const musicState = { suzuki: { page: 0 }, ameb: { page: 0 }, collection: { page: 0 } };
+  renderShelf('shelf-stories', 'pager-stories', STORIES, storiesState);
+  renderShelf('shelf-reading', 'pager-reading', READING, readingState);
+  learningSessions = loadLearningSessions();
+  renderLearningSessions();
+  renderMusicCategory('suzuki');
+
+  document.getElementById('about-avatar').textContent = SPORTS.avatar;
+  document.getElementById('about-name').textContent = SPORTS.name;
+  document.getElementById('about-bio').textContent = SPORTS.bio;
 </script>
 
 </body>
