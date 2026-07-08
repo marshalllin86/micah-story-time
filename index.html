@@ -297,6 +297,31 @@
     color: #fff;
   }
 
+  .sports-subtabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .sports-subtab{
+    border: none;
+    background: var(--paper);
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
+  }
+
+  .sports-subtab.active{
+    background: var(--teal);
+    color: #fff;
+  }
+
   .learning-card{
     background: var(--paper);
     border-radius: var(--radius);
@@ -541,8 +566,12 @@
 </section>
 
 <section id="panel-sports" class="panel">
-  <div class="about-card">
-    <div class="avatar" id="about-avatar">⚽</div>
+  <div class="sports-subtabs" role="tablist" aria-label="Sports categories">
+    <button class="sports-subtab active" data-sport="swimming">Swimming</button>
+    <button class="sports-subtab" data-sport="basketball">Basketball</button>
+  </div>
+  <div class="about-card" id="sports-card">
+    <div class="avatar" id="about-avatar">🏊</div>
     <h2 id="about-name"></h2>
     <p id="about-bio"></p>
   </div>
@@ -598,9 +627,16 @@
   let editingSessionId = null;
 
   const SPORTS = {
-    avatar: "⚽",
-    name: "Sports",
-    bio: "I enjoy staying active with sports, training, and healthy routines.\nThis section can be updated with your favourite activities.",
+    swimming: {
+      avatar: "🏊",
+      name: "Swimming",
+      bio: "Swimming helps build endurance, focus, and confidence.\nAdd your training notes here."
+    },
+    basketball: {
+      avatar: "🏀",
+      name: "Basketball",
+      bio: "Basketball improves teamwork, coordination, and energy.\nAdd your practice goals here."
+    }
   };
 
   const COLORS = ['sage', 'rose', 'ochre', 'indigo', 'teal', 'plum'];
@@ -830,6 +866,16 @@
     });
   }
 
+  function renderSportsCategory(categoryKey){
+    const sport = SPORTS[categoryKey] || SPORTS.swimming;
+    document.getElementById('about-avatar').textContent = sport.avatar;
+    document.getElementById('about-name').textContent = sport.name;
+    document.getElementById('about-bio').textContent = sport.bio;
+    document.querySelectorAll('.sports-subtab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.sport === categoryKey);
+    });
+  }
+
   videoClose.addEventListener('click', () => {
     videoModal.classList.remove('open');
     videoFrame.src = '';
@@ -861,6 +907,12 @@
   document.querySelectorAll('.subtab').forEach(btn => {
     btn.addEventListener('click', () => {
       renderMusicCategory(btn.dataset.subtab);
+    });
+  });
+
+  document.querySelectorAll('.sports-subtab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      renderSportsCategory(btn.dataset.sport);
     });
   });
 
@@ -910,10 +962,7 @@
   learningSessions = loadLearningSessions();
   renderLearningSessions();
   renderMusicCategory('suzuki');
-
-  document.getElementById('about-avatar').textContent = SPORTS.avatar;
-  document.getElementById('about-name').textContent = SPORTS.name;
-  document.getElementById('about-bio').textContent = SPORTS.bio;
+  renderSportsCategory('swimming');
 </script>
 
 </body>
