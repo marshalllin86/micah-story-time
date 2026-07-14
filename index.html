@@ -7,527 +7,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-
-  /* ============================================================
-     怎么编辑这个页面（不用懂代码，改下面 <script> 里这几处就行）：
-
-     1. 加故事：改 STORIES 数组，每行 { title: "标题", file: "audio/xxx.mp3" }
-     2. 加音乐：改 MUSIC 数组，格式一样
-     3. 颜色不用自己指定，会按 COLORS 列表的顺序自动循环分配
-     4. 每页显示几个：改 PAGE_SIZE 这个数字（建议 10~15 之间）
-     5. "关于我"里的文字：改 ABOUT 这个对象
-     ============================================================ */
-
-  :root{
-    --bg: #eef3f2;
-    --paper: #FFFFFF;
-    --ink: #2B3A36;
-    --ink-soft: #5C6B67;
-    --sage:   #5C8374;
-    --rose:   #C97064;
-    --ochre:  #D4A24C;
-    --indigo: #3E5C76;
-    --teal:   #2E7A80;
-    --plum:   #7D5A76;
-    --radius: 22px;
-  }
-
-  *{ box-sizing: border-box; }
-
-  html, body{
-    margin:0; padding:0;    background: var(--bg);
-    color: var(--ink);
-    font-family: "Noto Sans SC", sans-serif;
-    min-height: 100vh;
-  }
-
-  body{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding: 32px 16px 80px;
-  }
-
-  header{
-    text-align:center;
-    margin-bottom: 20px;
-  }
-
-  h1{
-    font-family: "Baloo 2", "Noto Sans SC", sans-serif;
-    font-weight:700;
-    font-size: clamp(32px, 8vw, 52px);
-    margin: 0 0 6px;
-    color: var(--ink);
-    letter-spacing: 1px;
-  }
-
-  header p{
-    margin:0;
-    color: var(--ink-soft);
-    font-size: 16px;
-  }
-
-  .tabs{
-    display:flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    background: var(--paper);
-    padding: 6px;
-    border-radius: 999px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
-  }
-
-  .tab{
-    border: none;
-    background: transparent;
-    font-family: "Noto Sans SC", sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--ink-soft);
-    padding: 10px 22px;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: background .15s ease, color .15s ease;
-  }
-
-  .tab.active{
-    background: var(--indigo);
-    color: #fff;
-  }
-
-  .tab:focus-visible{
-    outline: 3px solid var(--indigo);
-    outline-offset: 2px;
-  }
-
-  .panel{ display:none; width:100%; max-width: 640px; }
-  .panel.active{ display:block; }
-
-  .shelf{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .book{
-    --accent: var(--sage);
-    position: relative;
-    display:flex;
-    align-items:center;
-    gap: 16px;
-    background: var(--paper);
-    border-radius: var(--radius);
-    padding: 14px 18px 14px 14px;
-    border: none;
-    width:100%;
-    text-align:left;
-    cursor:pointer;
-    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
-    transition: transform .18s ease, box-shadow .18s ease;
-    font-family: inherit;
-  }
-
-  .book.sage{   --accent: var(--sage); }
-  .book.rose{   --accent: var(--rose); }
-  .book.ochre{  --accent: var(--ochre); }
-  .book.indigo{ --accent: var(--indigo); }
-  .book.teal{   --accent: var(--teal); }
-  .book.plum{   --accent: var(--plum); }
-
-  .book:active{ transform: scale(0.98); }
-
-  .book:focus-visible{
-    outline: 3px solid var(--accent);
-    outline-offset: 3px;
-  }
-
-  .spine{
-    flex: 0 0 14px;
-    align-self: stretch;
-    border-radius: 10px;
-    background: var(--accent);
-    transition: flex-basis .25s ease;
-  }
-
-  .book.playing .spine{ flex-basis: 22px; }
-
-  .play-icon{
-    flex: 0 0 auto;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: var(--accent);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-
-  .play-icon svg{ width: 22px; height: 22px; fill: #fff; }
-
-  .info{ flex: 1 1 auto; min-width: 0; }
-
-  .title{
-    font-size: 19px;
-    font-weight: 500;
-    color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .status{
-    font-size: 13px;
-    color: var(--ink-soft);
-    margin-top: 2px;
-    height: 16px;
-  }
-
-  .meta-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 10px;
-    margin-top: 6px;
-  }
-
-  .action-btn{
-    display:inline-flex;
-    align-items:center;
-    gap: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--accent);
-    text-decoration: none;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-
-  .action-btn:hover{
-    text-decoration: underline;
-  }
-
-  .progress-track{
-    height: 4px;
-    background: #E7ECEA;
-    border-radius: 4px;
-    margin-top: 8px;
-    overflow: hidden;
-  }
-
-  .progress-fill{
-    height: 100%;
-    width: 0%;
-    background: var(--accent);
-    border-radius: 4px;
-  }
-
-  .book.playing{ box-shadow: 0 4px 14px rgba(43,58,54,0.12); }
-
-  @keyframes pulse{
-    0%, 100% { opacity: 1; }
-    50% { opacity: .55; }
-  }
-
-  .book.playing .play-icon{ animation: pulse 1.6s ease-in-out infinite; }
-
-  @media (prefers-reduced-motion: reduce){
-    .book, .spine{ transition: none; }
-    .book.playing .play-icon{ animation: none; }
-  }
-
-  .pager{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap: 16px;
-    margin-top: 20px;
-  }
-
-  .pager-btn{
-    border: none;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: "Noto Sans SC", sans-serif;
-    font-size: 15px;
-    padding: 10px 18px;
-    border-radius: 999px;
-    cursor: pointer;
-    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
-  }
-
-  .pager-btn:disabled{
-    opacity: .4;
-    cursor: default;
-  }
-
-  .pager-info{
-    color: var(--ink-soft);
-    font-size: 14px;
-  }
-
-  .music-subtabs{
-    display:flex;
-    flex-wrap:wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .subtab{
-    border: none;
-    background: var(--paper);
-    color: var(--ink-soft);
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
-  }
-
-  .subtab.active{
-    background: var(--indigo);
-    color: #fff;
-  }
-
-  .sports-subtabs{
-    display:flex;
-    flex-wrap:wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .sports-subtab{
-    border: none;
-    background: var(--paper);
-    color: var(--ink-soft);
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
-  }
-
-  .sports-subtab.active{
-    background: var(--teal);
-    color: #fff;
-  }
-
-  .learning-card{
-    background: var(--paper);
-    border-radius: var(--radius);
-    padding: 22px;
-    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
-  }
-
-  .learning-form{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .learning-label{
-    font-weight: 600;
-    color: var(--ink);
-  }
-
-  .learning-title-input,
-  .learning-notes-input{
-    width: 100%;
-    border: 1px solid #dfe7e4;
-    border-radius: 14px;
-    padding: 12px 14px;
-    font: inherit;
-    color: var(--ink);
-    background: #fafdfc;
-  }
-
-  .learning-notes-input{
-    min-height: 120px;
-    resize: vertical;
-  }
-
-  .learning-submit{
-    align-self: flex-start;
-    border: none;
-    background: var(--indigo);
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: 999px;
-    cursor: pointer;
-  }
-
-  .learning-actions{
-    display:flex;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .learning-action-btn{
-    border: none;
-    background: transparent;
-    color: var(--indigo);
-    cursor: pointer;
-    font-size: 13px;
-    padding: 0;
-  }
-
-  .learning-action-btn.delete{
-    color: var(--rose);
-  }
-
-  .learning-list{
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .learning-item{
-    background: #f7fbfa;
-    border: 1px solid #e3ece8;
-    border-radius: 16px;
-    padding: 14px;
-  }
-
-  .learning-item h3{
-    margin: 0 0 6px;
-    font-size: 18px;
-  }
-
-  .learning-item p{
-    margin: 0;
-    color: var(--ink-soft);
-    white-space: pre-line;
-    line-height: 1.6;
-  }
-
-  .learning-meta{
-    margin-top: 8px;
-    font-size: 12px;
-    color: var(--ink-soft);
-  }
-
-  .learning-empty{
-    color: var(--ink-soft);
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  .about-card{
-    background: var(--paper);
-    border-radius: var(--radius);
-    padding: 32px 26px;
-    text-align:center;
-    box-shadow: 0 2px 0 rgba(43,58,54,0.06);
-  }
-
-  .avatar{
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: var(--indigo);
-    color: #fff;
-    font-size: 34px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin: 0 auto 14px;
-  }
-
-  .about-card h2{
-    font-family: "Baloo 2", "Noto Sans SC", sans-serif;
-    margin: 0 0 10px;
-    font-size: 24px;
-  }
-
-  .about-card p{
-    color: var(--ink-soft);
-    font-size: 15px;
-    line-height: 1.7;
-    margin: 0;
-    white-space: pre-line;
-  }
-
-  footer{
-    margin-top: 40px;
-    color: var(--ink-soft);
-    font-size: 13px;
-    text-align:center;
-  }
-
-  .video-modal{
-    position: fixed;
-    inset: 0;
-    background: rgba(20, 27, 25, 0.7);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 1000;
-  }
-
-  .video-modal.open{
-    display: flex;
-  }
-
-  .video-card{
-    width: min(900px, 100%);
-    background: var(--paper);
-    border-radius: 24px;
-    padding: 16px;
-    box-shadow: 0 18px 50px rgba(43,58,54,0.24);
-  }
-
-  .video-header{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-
-  .video-close{
-    border: none;
-    background: transparent;
-    font-size: 24px;
-    line-height: 1;
-    cursor: pointer;
-    color: var(--ink-soft);
-  }
-
-  .video-frame{
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border: 0;
-    border-radius: 14px;
-    background: #000;
-  }
-
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header>
-  <h1>Micah's Inventory</h1>
-  <p>Explore stories, reading, music, learning, and sports</p>
+  <h1 id="site-title"></h1>
+  <p id="site-subtitle"></p>
 </header>
 
-<nav class="tabs" role="tablist">
-  <button class="tab active" data-tab="stories">Stories</button>
-  <button class="tab" data-tab="reading">Reading</button>
-  <button class="tab" data-tab="music">Music</button>
-  <button class="tab" data-tab="learning">My Learning</button>
-  <button class="tab" data-tab="sports">Sports</button>
-</nav>
+<nav class="tabs" id="site-tabs" role="tablist"></nav>
 
 <section id="panel-stories" class="panel active">
   <div class="shelf" id="shelf-stories"></div>
@@ -574,6 +63,16 @@
     <div class="avatar" id="about-avatar">🏊</div>
     <h2 id="about-name"></h2>
     <p id="about-bio"></p>
+
+    <form id="sports-upload-form" class="sports-upload-form">
+      <button id="sports-folder-btn" class="sports-upload-btn" type="button">Choose photo folder</button>
+      <div id="sports-folder-status" class="sports-folder-status">Photos will be saved into the photo directory after you choose a folder.</div>
+      <input id="sports-photo-input" class="sports-upload-input" type="file" accept="image/*" />
+      <input id="sports-photo-caption" class="sports-upload-input" type="text" placeholder="Add a caption" />
+      <button class="sports-upload-btn" type="submit">Upload Photo</button>
+    </form>
+
+    <div class="sports-gallery" id="sports-gallery"></div>
   </div>
 </section>
 
@@ -591,56 +90,33 @@
 
 <audio id="player" preload="none"></audio>
 
+<script src="data.js"></script>
 <script>
-  const STORIES = [
-    { title: "Where do flies go in the Winter?", file: "audio/where_do_flies_go_in_the_winter.m4a" },
-    { title: "What Does 'As The Crow Flies' Mean?", file: "audio/what_does_as_the_crow_flies_mean.m4a" },
-    { title: "What is Spring Water?", file: "audio/what_is_spring_water.m4a" },
-    { title: "Why Do We Sneeze?", file: "audio/why_do_we_sneeze.m4a" },
-    { title: "Why Do Pieces of Wood Have Knots?", file: "audio/why_do_pieces_of_wood_have_knots.m4a" },
-    { title: "Why Do Snakes Coil Up to Sleep?", file: "audio/why_do_snakes_coil_up_to_sleep.m4a" },
-  ];
-
-  const READING = [
-    { title: "Reading Goal", description: "A short reading plan for the week.", file: "" },
-    { title: "Poetry Practice", description: "A calm collection of poems to enjoy.", file: "" },
-  ];
-
-  const MUSIC_CATEGORIES = {
-    suzuki: [
-      { title: "Level 1 Graduation Piece - Minuet in G Major", file: "audio/level1.webm", link: "https://www.youtube.com/watch?v=M6O6M05hV60" },
-      { title: "Level 2 Graduation Piece - Sonatina in G Major", file: "audio/level2.webm", link: "https://www.youtube.com/watch?v=ozd27F2Xn_o" },
-      { title: "Level 3 Graduation Piece - Sonatina in C Major", file: "audio/level3.webm", link: "https://www.youtube.com/watch?v=OHuKSd5hWsM" },
-      { title: "Level 4 Graduation Piece - Minuet 1, II and Gigue from Partita in Bflat BWV825", file: "audio/level4.webm", link: "https://www.youtube.com/watch?v=nWtlYeWjg1M" },
-    ],
-    ameb: [
-      { title: "Level 3 Graduation Piece - Sonatina in C Major", file: "audio/level3.webm", link: "https://www.youtube.com/watch?v=OHuKSd5hWsM" },
-      { title: "Level 4 Graduation Piece - Minuet 1, II and Gigue from Partita in Bflat BWV825", file: "audio/level4.webm", link: "https://www.youtube.com/watch?v=nWtlYeWjg1M" },
-    ],
-    collection: [
-      { title: "My Favourite Practice Pieces", description: "Add your favourite recordings here.", file: "" },
-    ],
-  };
-
+  const STORIES = SITE_CONTENT.stories;
+  const READING = SITE_CONTENT.reading;
+  const MUSIC_CATEGORIES = SITE_CONTENT.musicCategories;
+  const SPORTS = SITE_CONTENT.sports;
   const LEARNING_STORAGE_KEY = 'micah-learning-sessions';
+  const SPORTS_STORAGE_KEY = 'micah-sports-photos';
   let learningSessions = [];
   let editingSessionId = null;
-
-  const SPORTS = {
-    swimming: {
-      avatar: "🏊",
-      name: "Swimming",
-      bio: "Swimming helps build endurance, focus, and confidence.\nAdd your training notes here."
-    },
-    basketball: {
-      avatar: "🏀",
-      name: "Basketball",
-      bio: "Basketball improves teamwork, coordination, and energy.\nAdd your practice goals here."
-    }
-  };
+  let activeSport = 'swimming';
+  let photoDirectoryHandle = null;
 
   const COLORS = ['sage', 'rose', 'ochre', 'indigo', 'teal', 'plum'];
   const PAGE_SIZE = 12;
+
+  const siteTitle = document.getElementById('site-title');
+  const siteSubtitle = document.getElementById('site-subtitle');
+  const siteTabs = document.getElementById('site-tabs');
+
+  if(siteTitle) siteTitle.textContent = SITE_CONTENT.title;
+  if(siteSubtitle) siteSubtitle.textContent = SITE_CONTENT.subtitle;
+  if(siteTabs){
+    siteTabs.innerHTML = SITE_CONTENT.tabs.map((tab) => `
+      <button class="tab ${tab.id === 'stories' ? 'active' : ''}" data-tab="${tab.id}">${tab.label}</button>
+    `).join('');
+  }
 
   const player = document.getElementById('player');
   const videoModal = document.getElementById('video-modal');
@@ -866,7 +342,54 @@
     });
   }
 
+  function loadSportsPhotos(){
+    try {
+      const stored = localStorage.getItem(SPORTS_STORAGE_KEY);
+      const parsed = JSON.parse(stored || '{}');
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function saveSportsPhotos(data){
+    localStorage.setItem(SPORTS_STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function renderSportsPhotos(){
+    const gallery = document.getElementById('sports-gallery');
+    if(!gallery) return;
+
+    const photosBySport = loadSportsPhotos();
+    const photos = photosBySport[activeSport] || [];
+    if(photos.length === 0){
+      gallery.innerHTML = '<div class="learning-empty">No photos yet. Upload one above.</div>';
+      return;
+    }
+
+    gallery.innerHTML = photos.map((photo) => `
+      <div class="sports-photo-card">
+        <img src="${photo.dataUrl}" alt="${escapeHtml(photo.caption || 'Sports photo')}" />
+        <div class="sports-photo-caption">${escapeHtml(photo.caption || '')}</div>
+      </div>
+    `).join('');
+  }
+
+  async function ensurePhotoDirectoryHandle(){
+    if(photoDirectoryHandle) return photoDirectoryHandle;
+    if(!window.showDirectoryPicker){
+      throw new Error('Directory picker is not supported in this browser.');
+    }
+    photoDirectoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    const status = document.getElementById('sports-folder-status');
+    if(status){
+      status.textContent = 'Photo folder ready. New uploads will be saved into the selected folder.';
+    }
+    return photoDirectoryHandle;
+  }
+
   function renderSportsCategory(categoryKey){
+    activeSport = categoryKey;
     const sport = SPORTS[categoryKey] || SPORTS.swimming;
     document.getElementById('about-avatar').textContent = sport.avatar;
     document.getElementById('about-name').textContent = sport.name;
@@ -874,6 +397,7 @@
     document.querySelectorAll('.sports-subtab').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.sport === categoryKey);
     });
+    renderSportsPhotos();
   }
 
   videoClose.addEventListener('click', () => {
@@ -915,6 +439,63 @@
       renderSportsCategory(btn.dataset.sport);
     });
   });
+
+  const sportsFolderBtn = document.getElementById('sports-folder-btn');
+  if(sportsFolderBtn){
+    sportsFolderBtn.addEventListener('click', async () => {
+      try {
+        await ensurePhotoDirectoryHandle();
+      } catch (error) {
+        const status = document.getElementById('sports-folder-status');
+        if(status){
+          status.textContent = 'Folder selection was cancelled or is not supported in this browser.';
+        }
+      }
+    });
+  }
+
+  const sportsUploadForm = document.getElementById('sports-upload-form');
+  if(sportsUploadForm){
+    sportsUploadForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const fileInput = document.getElementById('sports-photo-input');
+      const captionInput = document.getElementById('sports-photo-caption');
+      const file = fileInput ? fileInput.files[0] : null;
+      if(!file) return;
+
+      try {
+        const directoryHandle = await ensurePhotoDirectoryHandle();
+        const extension = (file.name.split('.').pop() || 'jpg').toLowerCase();
+        const fileName = `${activeSport}-${Date.now()}.${extension}`;
+        if(directoryHandle){
+          const targetHandle = await directoryHandle.getFileHandle(fileName, { create: true });
+          const writable = await targetHandle.createWritable();
+          await writable.write(file);
+          await writable.close();
+        }
+      } catch (error) {
+        console.warn('Unable to save photo to folder:', error);
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const photosBySport = loadSportsPhotos();
+        const photos = photosBySport[activeSport] || [];
+        photos.unshift({
+          id: Date.now(),
+          caption: captionInput ? captionInput.value.trim() : '',
+          dataUrl: reader.result,
+          savedPath: `photo/${activeSport}-${Date.now()}.${(file.name.split('.').pop() || 'jpg').toLowerCase()}`
+        });
+        photosBySport[activeSport] = photos;
+        saveSportsPhotos(photosBySport);
+        renderSportsPhotos();
+        if(fileInput) fileInput.value = '';
+        if(captionInput) captionInput.value = '';
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
   const learningForm = document.getElementById('learning-form');
   if(learningForm){
